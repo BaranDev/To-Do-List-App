@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-Do List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/gh/cmiscm/leonsans@master/dist/leon.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TweenMax.min.js"></script>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body class="body bg-gray-100 font-sans overflow-hidden">
+    <div class="container mx-auto mt-10 max-w-screen-md p-5">
+      <form
+        id="addTaskForm"
+        class="bg-white shadow-md rounded-lg p-8 mb-6 main-form"
+      >
+        <div class="mb-4">
+          <input
+            type="text"
+            id="task"
+            name="task"
+            class="main-input shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline placeholder:text-white text-white"
+            placeholder="Add new task"
+          />
+        </div>
+        <div class="flex items-center justify-between">
+          <button
+            type="submit"
+            class="bg-[#336192] hover:bg-[#3B6FA7] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            Add Task
+          </button>
+          <button
+            type="button"
+            onclick="toggleEdit()"
+            id="editButton"
+            class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            Edit Tasks
+          </button>
+        </div>
+      </form>
+      <div
+        id="taskList"
+        class="task-list flex flex-col items-center justify-center w-full max-w-xl mx-auto rounded-lg bg-white bg-gradient-to-r from-[#1d3752] to-[#7b02b0] shadow-md p-8 mb-6"
+      >
+        <ul class="space-y-4">
+          {% for task_id, task in tasks.items() %}
+          <li
+            class="flex justify-between items-center p-4 rounded-lg shadow {{ 'bg-[rgba(69,19,231,0.25)] shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] backdrop-blur-sm' if not task['completed'] else 'bg-[rgba(34,197,94,0.25)] shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] backdrop-blur-sm' }}"
+            style="border-radius: 10px"
+          >
+            <span class="text-white mr-5">{{ task['description'] }}</span>
+            <div class="flex space-x-2">
+              <button
+                class="edit-controls bg-blue-500/25 hover:bg-blue-700/25 text-white font-bold py-1 px-2 rounded-lg backdrop-blur-md focus:outline-none focus:shadow-outline"
+                onclick="openModal('{{ task_id }}', `{{ task['description'] }}`)"
+              >
+                Edit
+              </button>
+              <button
+                class="edit-controls bg-red-500/25 hover:bg-red-700/25 text-white font-bold py-1 px-2 rounded-lg backdrop-blur-md focus:outline-none focus:shadow-outline"
+                onclick="deleteTask('{{ task_id }}')"
+              >
+                Delete
+              </button>
+              {% if not task['completed'] %}
+              <button
+                class="complete-controls bg-green-500/25 hover:bg-green-700/25 text-white font-bold py-1 px-2 rounded-lg backdrop-blur-md focus:outline-none focus:shadow-outline"
+                onclick="completeTask('{{ task_id }}')"
+              >
+                Complete
+              </button>
+              {% else %}
+              <button
+                class="complete-controls bg-yellow-500/25 hover:bg-yellow-700/25 text-white font-bold py-1 px-2 rounded-lg backdrop-blur-md focus:outline-none focus:shadow-outline"
+                onclick="markAsIncomplete('{{ task_id }}')"
+              >
+                Incomplete
+              </button>
+              {% endif %}
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div id="editModal" class="modal backdrop-blur-sm">
+      <div
+        class="modal-content bg-blue-400/25 backdrop-blur-md p-6 rounded-lg shadow-lg w-3/12"
+      >
+        <form id="editForm" method="POST">
+          <input type="hidden" id="modalTaskId" name="task_id" />
+          <div class="mb-4">
+            <div class="flex justify-center">
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2 text-white shadow appearance-none"
+                >Edit Task</label
+              >
+            </div>
+            <input
+              type="text"
+              id="modalInput"
+              name="edit_task"
+              class="modal-input shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline placeholder:text-white"
+              placeholder="New task description"
+            />
+          </div>
+          <div class="flex justify-center space-x-2">
+            <button
+              type="submit"
+              class="bg-blue-500/25 hover:bg-blue-700/25 text-white font-bold py-2 px-4 rounded-lg backdrop-blur-md focus:outline-none focus:shadow-outline"
+            >
+              Update Task
+            </button>
+            <button
+              type="button"
+              onclick="closeModal()"
+              class="bg-gray-500/25 hover:bg-gray-700/25 text-white font-bold py-2 px-4 rounded-lg backdrop-blur-md focus:outline-none focus:shadow-outline"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script src="/static/scripts.js"></script>
+  </body>
+</html>
