@@ -10,6 +10,7 @@ This app has a cool looking UI and is a good example of Flask and AJAX calls.
 - Mark tasks as complete or incomplete
 - Responsive design
 - Modern, glassmorphic UI
+
 ![alt text](./resources/image.png)
 
 ## Installation
